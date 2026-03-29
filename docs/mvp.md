@@ -1,45 +1,124 @@
-# MVP
+# MVP 文档
 
-## Goal
-Build a web-based AI study document organizer for students.
+> 内部对齐文档 · v0.1
 
-## Problem
-Students often store course materials in scattered folders and files. Important information such as grading rules, deadlines, and course policies is buried inside syllabi, slides, and readings. Organizing and reviewing these materials manually takes time and reduces study efficiency.
+---
 
-## Target users
-- College students
-- Students taking multiple courses at the same time
-- Users who want a cleaner and more structured study workflow
+## 目标
 
-## In scope
-- Create a course workspace
-- Upload course documents such as syllabus, slides, and readings
-- Organize uploaded files under each course
-- Extract key information from syllabus documents, including:
-  - grading breakdown
-  - deadlines
-  - exam dates
-  - course policies
-- Generate short summaries for uploaded documents
-- Show a simple study-oriented overview for each course
+构建一个面向大学生的 AI 学习资料管理工具，帮助学生把分散的课程文件整理成结构清晰、开箱即用的课程空间。
 
-## Out of scope
-- Mobile app
-- Real-time collaboration
-- Full calendar integration
-- Complex chat-based AI tutor features
-- Advanced long-term memory system
-- OCR-heavy support for every file type in v1
+---
 
-## Core user flow
-1. User creates a course
-2. User uploads course documents
-3. System stores and organizes the files
-4. System extracts key information from important documents
-5. User views summaries and structured course information in one place
+## 问题
 
-## Success criteria
-- User can create a course and upload documents successfully
-- User can see extracted grading, deadlines, and policies from a syllabus
-- User can view document summaries
-- User feels the course materials are more organized and easier to review
+学生缺的不是资料，缺的是一个把资料整理好的地方。
+
+课程文件通常散落在多个平台：syllabus 在 Canvas，slides 在教授的云盘，论文链接在群聊里，笔记存在本地文件夹里还没有统一命名。真正开始学习之前，学生要花大量时间找资料、分类、搞清楚"我有什么"。
+
+更麻烦的是，成绩比例、deadline、考试要求这些关键信息，通常藏在 PDF 的某一页里。学生要么反复翻找，要么凭记忆，要么干脆漏掉。
+
+**结果是：** 本该用来学习的时间和精力，被消耗在了整理资料上。
+
+---
+
+## 目标用户
+
+**核心用户：**
+- 同时管理 3 门以上课程的在读大学生
+- 需要处理多种文件类型（syllabus、slides、论文、作业）的学生
+- 觉得"整理资料"这件事拖慢了自己进入学习状态的人
+
+**未来可扩展：**
+- 备考场景（考研、职业资格考试）的资料整理
+- 研究生的文献与研究资料管理
+- 职场人士的工作文档与知识管理
+
+---
+
+## 功能范围
+
+### 核心工作空间
+- 创建和管理独立的课程空间
+- 上传课程文件（syllabus、slides、论文、笔记、作业要求）
+- 在每门课内对上传文件进行自动分类整理
+
+### AI 智能处理
+- **Syllabus 信息提取：** 自动识别并提取
+  - 成绩比例（grading breakdown）
+  - 作业与考试 deadline
+  - 考试时间与形式
+  - 课程政策（course policies）
+- **文档摘要生成：** 对 slides 和论文生成简短的学习向摘要
+
+### 课程概览页面
+- 每门课提供一个结构化的概览页面，将提取的关键信息和文档摘要集中展示在同一个地方
+
+---
+
+## 暂不做（v1 范围外）
+
+| 功能 | 暂缓原因 |
+|---|---|
+| 移动端 App | 优先验证 Web 端核心体验 |
+| 实时多人协作 | 不在 v1 核心使用场景内 |
+| 完整日历集成 | 增加复杂度，deadline 列表足够满足 v1 需求 |
+| 对话式 AI 辅导 | 不同产品方向——我们做整理，不做教学 |
+| 高级记忆系统 | 单次会话的 MVP 阶段暂不需要 |
+| 全文件类型 OCR | v1 限定支持文字版 PDF、PPT、Word |
+
+---
+
+## 核心用户流程
+
+```
+1. 用户创建课程空间
+        ↓
+2. 用户上传课程文件
+        ↓
+3. 系统存储并按文件类型自动分类
+        ↓
+4. AI 提取 syllabus 关键信息
+   + 为 slides 和论文生成摘要
+        ↓
+5. 用户在课程概览页看到成绩比例、
+   deadline、摘要——全部集中在一处
+```
+
+**设计原则：** 从上传完成到"可以开始学习"，中间不需要任何手动整理。
+
+---
+
+## 成功标准
+
+### 功能层面
+- [ ] 用户能顺利创建课程并上传文件，无报错
+- [ ] 上传的文件能被正确按类型分类
+- [ ] 能从 syllabus 中准确提取成绩比例、deadline 和考试信息
+- [ ] 每份文件能生成对应的摘要并正常展示
+- [ ] 课程概览页将所有关键信息集中呈现
+
+### 体验层面
+- [ ] 用户上传完资料后，能在 2 分钟内找到所需内容
+- [ ] 用户感受到资料比之前更有条理
+- [ ] 提取结果的准确度足够让用户信任，不需要反复核对原文
+
+### 待验证的问题
+- 学生是否愿意把真实的课程资料上传到这个平台？
+- AI 提取的信息是否准确到可以替代手动阅读？
+- 课程概览是否真的减少了"准备学习"的时间成本？
+
+---
+
+## 核心假设
+
+| 假设 | 验证方式 |
+|---|---|
+| 资料整理是学生真实且高频的痛点 | MVP 前 / 期间的用户访谈 |
+| AI 提取的准确度足够实用 | 对样本 syllabus 进行人工准确率抽查 |
+| 用户会信任系统提取的信息并依赖它 | 用户测试中观察实际行为 |
+| 结构化概览能切实减少学习启动的时间 | 用户测试中记录前后对比 |
+
+---
+
+*文档版本：v0.1 · 内部对齐用途 · 请勿对外分发*

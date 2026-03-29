@@ -46,9 +46,9 @@ studybase/
 
 ## 相关文档
 
-- [产品介绍](./docs/product-intro.md)
-- [MVP 文档](./docs/mvp.md)
-- [系统架构](./docs/architecture.md)
+- [产品介绍](./docs/产品介绍.md)
+- [MVP 文档](./docs/MVP文档.md)
+- [系统架构](./docs/系统架构.md)
 
 ---
 

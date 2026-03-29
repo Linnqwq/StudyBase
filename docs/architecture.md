@@ -1,72 +1,173 @@
-# Architecture
+# 系统架构文档
 
-## Overview
-The system is a web-based AI study document organizer. It allows users to upload course materials, store them in the cloud, process document content, extract key information, and display organized results on the frontend.
+> 内部对齐文档 · v0.1
 
-## Main components
+---
 
-### Frontend
-Responsible for the user interface.
-Main responsibilities:
-- user login and basic interaction
-- course creation
-- file upload interface
-- document summary display
-- course dashboard display
+## 整体概述
 
-### Backend
-Responsible for application logic and AI workflow.
-Main responsibilities:
-- receive file upload requests
-- manage document metadata
-- trigger document parsing
-- call AI services for extraction and summarization
-- return processed results to frontend
+本系统是一个基于 Web 的 AI 学习资料管理工具。用户可以上传课程文件，系统将其存储至云端，经过内容解析与 AI 处理后，将结构化结果展示在前端课程空间中。
 
-### Storage
-Used for storing original uploaded files.
-Examples:
-- Supabase Storage
+---
+
+## 核心组件
+
+### 前端（Frontend）
+
+负责用户界面与交互逻辑。
+
+**主要职责：**
+- 用户登录与身份管理
+- 课程空间的创建与管理
+- 文件上传交互界面
+- 文档摘要与关键信息展示
+- 课程 Dashboard 整体呈现
+
+**技术选型：** Next.js · React · TypeScript
+
+---
+
+### 后端（Backend）
+
+负责应用逻辑、数据流转与 AI 处理链路调度。
+
+**主要职责：**
+- 接收前端文件上传请求
+- 管理文档元数据（metadata）
+- 触发文档解析流程
+- 调用 AI 服务进行信息提取与摘要生成
+- 将处理结果写入数据库并返回给前端
+
+**技术选型：** FastAPI · Python
+
+---
+
+### 云存储（Storage）
+
+用于存储用户上传的原始文件。
+
+**候选方案：**
+- Supabase Storage（推荐，与数据库集成方便）
 - AWS S3
 
-### Database
-Used for storing structured application data.
-Examples of stored data:
-- users
-- courses
-- documents
-- extracted metadata
-- summaries
-- chunk records
-- embeddings later if needed
+**存储内容：** 原始文件（PDF、PPT、Word 等），不做内容处理，仅作持久化存储。
 
-### AI processing pipeline
-Responsible for:
-- parsing document text
-- splitting text into chunks if needed
-- extracting grading, deadlines, and policies
-- generating document summaries
-- supporting semantic retrieval in later versions
+---
 
-## Basic flow
-1. User creates a course on the frontend
-2. User uploads a document
-3. File is stored in cloud storage
-4. Backend records document metadata in database
-5. Backend parses the file content
-6. AI processing extracts useful information and generates summaries
-7. Results are saved to database
-8. Frontend displays organized course information to the user
+### 数据库（Database）
 
-## Suggested first-stack direction
-- Frontend: Next.js
-- Backend: FastAPI
-- Database: PostgreSQL
-- Storage: Supabase Storage or AWS S3
+用于存储结构化的应用数据。
 
-## Future extensions
-- semantic search with embeddings
-- document Q&A
-- assignment reminder system
-- study plan generation
-- mobile companion app
+**技术选型：** PostgreSQL
+
+**主要数据表（初步规划）：**
+
+| 表名 | 存储内容 |
+|---|---|
+| `users` | 用户信息与认证数据 |
+| `courses` | 课程基本信息 |
+| `documents` | 文件元数据（文件名、类型、上传时间、存储路径等） |
+| `extracted_info` | 从 syllabus 提取的 grading、deadline、考试信息等 |
+| `summaries` | AI 生成的文档摘要 |
+| `chunks` | 文本分块记录（为后续语义检索做准备） |
+| `embeddings` | 向量数据（后续版本启用） |
+
+---
+
+### AI 处理 Pipeline
+
+负责文档内容的解析、结构化提取与摘要生成。
+
+**处理步骤：**
+
+1. **文档解析** — 从原始文件中提取纯文本内容
+2. **文本分块（Chunking）** — 将长文档切分为适合 AI 处理的片段
+3. **关键信息提取** — 识别并提取 grading breakdown、deadline、考试信息、课程政策等
+4. **摘要生成** — 对 slides、论文等文档生成结构化摘要
+5. **语义检索支持**（后续版本）— 生成 embeddings，支持向量搜索与文档 Q&A
+
+---
+
+## 数据流转（Basic Flow）
+
+```
+用户在前端创建课程
+        ↓
+用户上传文件
+        ↓
+文件存入云存储（Supabase Storage / S3）
+        ↓
+后端记录文档元数据至数据库
+        ↓
+后端触发文档解析 + AI 处理 Pipeline
+        ↓
+  ┌─────────────────────────┐
+  │  AI 处理 Pipeline        │
+  │  · 文本提取              │
+  │  · Chunking             │
+  │  · 关键信息提取           │
+  │  · 摘要生成              │
+  └─────────────────────────┘
+        ↓
+处理结果写入数据库
+        ↓
+前端展示结构化课程信息
+```
+
+---
+
+## 技术选型汇总
+
+| 层级 | 技术 | 备注 |
+|---|---|---|
+| 前端 | Next.js · React · TypeScript | Web 端，响应式设计 |
+| 后端 | FastAPI · Python | 轻量、异步支持好，适合 AI 链路集成 |
+| 数据库 | PostgreSQL | 结构化数据存储，后续可扩展向量支持 |
+| 云存储 | Supabase Storage 或 AWS S3 | 原始文件持久化 |
+| AI 处理 | LLM API（待定） | 信息提取 + 摘要生成 |
+| 设计工具 | Figma | UI 设计与原型 |
+| 协作工具 | GitHub | 版本管理与代码协作 |
+
+---
+
+## 组件关系图
+
+```
+┌─────────────────────────────────────────┐
+│              前端（Next.js）              │
+│  课程空间 · 文件上传 · Dashboard 展示     │
+└────────────────┬────────────────────────┘
+                 │ HTTP / REST API
+┌────────────────▼────────────────────────┐
+│              后端（FastAPI）              │
+│  业务逻辑 · 数据管理 · Pipeline 调度      │
+└──────┬─────────────┬────────────────────┘
+       │             │
+┌──────▼──────┐  ┌───▼──────────────────────┐
+│  云存储      │  │        数据库（PostgreSQL） │
+│  原始文件    │  │  用户 · 课程 · 文档元数据   │
+│  持久化存储  │  │  提取结果 · 摘要 · Chunks  │
+└─────────────┘  └───┬──────────────────────┘
+                     │
+          ┌──────────▼──────────────┐
+          │    AI 处理 Pipeline      │
+          │  文本解析 · Chunking     │
+          │  信息提取 · 摘要生成      │
+          └─────────────────────────┘
+```
+
+---
+
+## 后续扩展方向
+
+| 优先级 | 功能 | 依赖 |
+|---|---|---|
+| 中期 | 语义检索（Semantic Search） | Embeddings + 向量数据库 |
+| 中期 | 文档 Q&A | 语义检索能力 + 对话接口 |
+| 中期 | 作业 deadline 提醒 | 日历集成 或 通知系统 |
+| 长期 | 学习计划生成 | 用户行为数据 + AI 规划能力 |
+| 长期 | 移动端 App | Web 端体验验证完成后 |
+
+---
+
+*文档版本：v0.1 · 内部对齐用途 · 请勿对外分发*
